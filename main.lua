@@ -11,6 +11,12 @@ function love.load()
     game_state = "combat" -- Can be "combat", "map", "shop", etc.
     font = love.graphics.newFont(20)
     love.graphics.setFont(font)
+    
+    -- Load the background image
+    background = love.graphics.newImage("resources/images/background.jpg") -- Assumes background.png is in the project folder
+    
+    -- Load the player sprite
+    player_sprite = love.graphics.newImage("resources/images/player.jpg") -- Assumes player_sprite.png is in the project folder
 end
 
 function love.update(dt)
@@ -24,8 +30,14 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Draw the background first (scaled to window size)
+    love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
+    
     if game_state == "combat" then
-        -- Draw player stats
+        -- Draw player sprite (facing right, no scaling flipped, positioned left side)
+        love.graphics.draw(player_sprite, 50, 150, 0, 0.2, 0.2) -- x=50, y=150, no rotation, scale=1
+        
+        -- Draw player stats above or near the sprite
         love.graphics.print("Player HP: " .. player.hp .. " Energy: " .. player.energy, 10, 10)
         
         -- Draw enemy
