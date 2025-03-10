@@ -54,13 +54,13 @@ function Game:initializeGame()
     self.levelManager = LevelManager.new()
     self.enemies = self.levelManager:getCurrentEnemies()
     for _, card in ipairs(self.cards) do
-        table.insert(self.player.entity.deck, Card.new(card.name, card.attack, card.cost, card.description))
+        table.insert(self.player.deck, Card.new(card.name, card.attack, card.cost, card.description))
     end
     self.player:shuffleDeck()
     self.selectedCardIndex = nil
     self.selectedEnemyIndex = nil
     self.roundCounter = 1
-    self.player.entity:drawCards()
+    self.player:drawCards()
     self.transition.active = true
     self.transition.alpha = 1
 end
@@ -123,8 +123,8 @@ function Game:checkGameState()
             self.selectedCardIndex = nil
             self.selectedEnemyIndex = nil
             self.roundCounter = 1
-            self.player.entity.hand.cards = {}
-            self.player.entity:drawCards()
+            self.player.hand.cards = {}
+            self.player:drawCards()
             self.transition.active = true
             self.transition.alpha = 1
         else
@@ -141,7 +141,7 @@ function Game:update(dt)
         if self.enemyTurnAnimation.timer <= 0 then
             for _, enemy in ipairs(self.enemies) do
                 if enemy:isAlive() then
-                    enemy:playTurn(self.player.entity)
+                    enemy:playTurn(self.player)
                 end
                 enemy:update(dt)
             end
@@ -301,10 +301,10 @@ function Game:mousepressed(x, y, button)
         else
             local cw, ch = w * self.CONST.CARD_WIDTH, h * self.CONST.CARD_HEIGHT
             local marginX = cw * 0.33
-            local totalWidth = #self.player.entity.hand.cards * cw + (#self.player.entity.hand.cards - 1) * marginX
+            local totalWidth = #self.player.hand.cards * cw + (#self.player.hand.cards - 1) * marginX
             local startX = (w - totalWidth) / 2
             local cardY = h - ch - h * 0.02
-            for i, card in ipairs(self.player.entity.hand.cards) do
+            for i, card in ipairs(self.player.hand.cards) do
                 local cardX = startX + (i - 1) * (cw + marginX)
                 if Utils.isMouseOver(cardX, cardY, cw, ch) then
                     self.selectedCardIndex = i
