@@ -3,6 +3,8 @@ local Player = require("player")
 local LevelManager = require("level_manager")
 local Particles = require("particles")
 local Utils = require("utils")
+local Shaders = require("shaders")
+local SoundManager = require("sound_manager")
 
 local Game = {
     CONST = {
@@ -29,7 +31,9 @@ local Game = {
     selectedCardToDelete = nil,
     editingCardIndex = nil,
     particles = {},
-    transition = {active = false, alpha = 0}
+    transition = {active = false, alpha = 0},
+    shaderTime = 0,
+    backgroundCanvas = nil
 }
 
 Game.menuItems = {
@@ -40,6 +44,20 @@ Game.menuItems = {
 }
 
 function Game:load()
+    -- Initialize sounds
+    SoundManager.init()
+    SoundManager.playMusic()
+    
+    -- Initialize background canvas
+    self.backgroundCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+    
+    -- Set shader parameters
+    Shaders.cardGlow:send("glowStrength", 0.5)
+    Shaders.cardGlow:send("glowColor", {0.5, 0.7, 1.0})
+    Shaders.backgroundWave:send("amplitude", 0.005)
+    Shaders.backgroundWave:send("frequency", 10.0)
+    Shaders.cardHover:send("hoverStrength", 1.0)
+    
     local fullPath = love.filesystem.getSaveDirectory() .. "/cards.lua"
     print("Reading from file: " .. fullPath)
     local chunk = love.filesystem.load("cards.lua")
@@ -53,10 +71,20 @@ function Game:initializeGame()
     self.player = Player.new()
     self.levelManager = LevelManager.new()
     self.enemies = self.levelManager:getCurrentEnemies()
+    
+    -- Add multiple copies of each card to the deck
     for _, card in ipairs(self.cards) do
-        table.insert(self.player.deck, Card.new(card.name, card.attack, card.cost, card.description))
+        local copies = 3  -- Add 3 copies of each card
+        for i = 1, copies do
+            table.insert(self.player.deck, Card.new(card.name, card.attack, card.cost, card.description))
+        end
     end
-    self.player:shuffleDeck()
+    
+    if self.player.debug then
+        print(string.format("[Initialize] Created deck with %d cards", #self.player.deck))
+    end
+    
+    self.player:reshuffleDeck()
     self.selectedCardIndex = nil
     self.selectedEnemyIndex = nil
     self.roundCounter = 1
@@ -136,6 +164,26 @@ function Game:checkGameState()
 end
 
 function Game:update(dt)
+    -- Handle menu button hover sounds
+    if self.state == "menu" then
+        local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+        local bw, bh = w * self.CONST.BUTTON_WIDTH * 3, h * self.CONST.BUTTON_HEIGHT
+        local startY = h * 0.3
+        
+        for i, item in ipairs(self.menuItems) do
+            local x = (w - bw) / 2
+            local y = startY + (i - 1) * (bh + h * 0.05)
+            if Utils.isMouseOver(x, y, bw, bh) and item.hover == 0 then
+                SoundManager.playSound("button_hover")
+            end
+        end
+    end
+    
+    -- Update shader time
+    self.shaderTime = self.shaderTime + dt
+    Shaders.backgroundWave:send("time", self.shaderTime)
+    Shaders.cardHover:send("time", self.shaderTime)
+    
     if self.enemyTurnAnimation.active then
         self.enemyTurnAnimation.timer = self.enemyTurnAnimation.timer - dt
         if self.enemyTurnAnimation.timer <= 0 then
@@ -170,10 +218,19 @@ end
 
 function Game:draw()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+    
+    -- Draw background with wave effect
+    love.graphics.setCanvas(self.backgroundCanvas)
+    love.graphics.clear()
     for i = 0, h do
         love.graphics.setColor(0.1, 0.1, 0.2 + i / h * 0.3)
         love.graphics.line(0, i, w, i)
     end
+    love.graphics.setCanvas()
+    
+    love.graphics.setShader(Shaders.backgroundWave)
+    love.graphics.draw(self.backgroundCanvas)
+    love.graphics.setShader()
 
     if self.state == "menu" then
         love.graphics.setColor(1, 1, 1, 0.8)
@@ -277,6 +334,7 @@ end
 
 function Game:mousepressed(x, y, button)
     if button ~= 1 then return end
+    SoundManager.playSound("button_click")
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
     if self.state == "menu" then
