@@ -10,7 +10,7 @@ function RenderHand(hand, x, y, w, h, selectedIndex)
         if card then  -- Safety check
             local cardX = startX + (i - 1) * (w + w * 0.33)
             RenderCard(card, cardX, y, w, h, i == selectedIndex)
-        elseif hand.debug then
+        else
             print(string.format("[Hand] Warning: Nil card at index %d", i))
         end
     end
