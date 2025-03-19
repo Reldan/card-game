@@ -2,11 +2,12 @@ local Card = require("card")
 local Player = require("player")
 local LevelManager = require("level_manager")
 local Utils = require("utils")
+require("enemy_renderer")
 
 local Game = {
     CONST = {
-        CARD_WIDTH = 0.25,
-        CARD_HEIGHT = 0.35,
+        CARD_WIDTH = 0.125,
+        CARD_HEIGHT = 0.175,
         BUTTON_WIDTH = 0.12,
         BUTTON_HEIGHT = 0.06,
         INFO_WIDTH = 0.22,
@@ -180,7 +181,7 @@ function Game:draw()
         local startX = (w - totalEnemyWidth) / 2
         for i, enemy in ipairs(self.enemies) do
             local x = startX + (i - 1) * (enemyWidth + w * 0.02)
-            enemy:drawInfo(x, h * 0.05, enemyWidth, h * self.CONST.INFO_HEIGHT)
+            RenderEnemy(enemy, x, h * 0.05, enemyWidth, h * self.CONST.INFO_HEIGHT)
         end
         local cw, ch = h * self.CONST.CARD_WIDTH, h * self.CONST.CARD_HEIGHT
         RenderHand(self.player.hand, w / 2, h - ch - h * 0.02, cw, ch, self.selectedCardIndex)

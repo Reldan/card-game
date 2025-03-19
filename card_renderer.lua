@@ -3,6 +3,7 @@ function RenderCard(card, x, y, w, h, isSelected)
     local cardCanvas = love.graphics.newCanvas(w + 10, h + 10)
     love.graphics.setCanvas(cardCanvas)
     love.graphics.clear()
+    love.graphics.setBlendMode("alpha")
     
     -- Draw card base
     love.graphics.setColor(0, 0, 0, 0.3)
