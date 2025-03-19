@@ -26,10 +26,6 @@ function Player:drawInfo(x, y, w, h) -- Отрисовка информации
     love.graphics.printf("Energy: " .. self.energy .. "/" .. self.maxEnergy, x + w * 0.05, y + h * 0.65, w * 0.9, "left")
 end
 
-function Player:drawHand(x, y, cardW, cardH, selectedIndex) -- Отрисовка руки
-    RenderHand(self.hand, x, y, cardW, cardH, selectedIndex)
-end
-
 function Player:endTurn()
     print("\n[End Turn] Starting end turn sequence")
     print(string.format("[End Turn] Initial state - Hand: %d, Deck: %d, Discard: %d",

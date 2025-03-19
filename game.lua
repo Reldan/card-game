@@ -7,8 +7,8 @@ local SoundManager = require("sound_manager")
 
 local Game = {
     CONST = {
-        CARD_WIDTH = 0.15,
-        CARD_HEIGHT = 0.3,
+        CARD_WIDTH = 0.25,
+        CARD_HEIGHT = 0.35,
         BUTTON_WIDTH = 0.12,
         BUTTON_HEIGHT = 0.06,
         INFO_WIDTH = 0.22,
@@ -50,8 +50,6 @@ function Game:load()
     -- Set shader parameters
     Shaders.cardGlow:send("glowStrength", 0.5)
     Shaders.cardGlow:send("glowColor", {0.5, 0.7, 1.0})
-    Shaders.backgroundWave:send("amplitude", 0.005)
-    Shaders.backgroundWave:send("frequency", 10.0)
     Shaders.cardHover:send("hoverStrength", 1.0)
     
     self.cards = {
@@ -136,7 +134,6 @@ function Game:update(dt)
     
     -- Update shader time
     self.shaderTime = self.shaderTime + dt
-    Shaders.backgroundWave:send("time", self.shaderTime)
     Shaders.cardHover:send("time", self.shaderTime)
     
     if self.enemyTurnAnimation.active then
@@ -174,19 +171,6 @@ function Game:draw()
     local w = love.graphics.getWidth()
     local h = love.graphics.getHeight()
     
-    -- Draw background with wave effect
-    love.graphics.setCanvas(self.backgroundCanvas)
-    love.graphics.clear()
-    for i = 0, h do
-        love.graphics.setColor(0.1, 0.1, 0.2 + i / h * 0.3)
-        love.graphics.line(0, i, w, i)
-    end
-    love.graphics.setCanvas()
-    
-    love.graphics.setShader(Shaders.backgroundWave)
-    love.graphics.draw(self.backgroundCanvas)
-    love.graphics.setShader()
-
     if self.state == "menu" then
         love.graphics.setColor(1, 1, 1, 0.8)
         local font = love.graphics.newFont(48) 
@@ -216,8 +200,8 @@ function Game:draw()
             local x = startX + (i - 1) * (enemyWidth + w * 0.02)
             enemy:drawInfo(x, h * 0.05, enemyWidth, h * self.CONST.INFO_HEIGHT)
         end
-        local cw, ch = w * self.CONST.CARD_WIDTH, h * self.CONST.CARD_HEIGHT
-        self.player:drawHand(w / 2, h - ch - h * 0.02, cw, ch, self.selectedCardIndex)
+        local cw, ch = h * self.CONST.CARD_WIDTH, h * self.CONST.CARD_HEIGHT
+        RenderHand(self.player.hand, w / 2, h - ch - h * 0.02, cw, ch, self.selectedCardIndex)
         love.graphics.setColor(0.4, 0.6, 0.8)
         love.graphics.rectangle("fill", w * 0.85, h * 0.85, w * self.CONST.BUTTON_WIDTH, h * self.CONST.BUTTON_HEIGHT, 10, 10)
         love.graphics.setColor(0, 0, 0)

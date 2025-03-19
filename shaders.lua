@@ -12,19 +12,6 @@ Shaders.cardGlow = love.graphics.newShader[[
     }
 ]]
 
--- Wave effect shader for background
-Shaders.backgroundWave = love.graphics.newShader[[
-    extern number time;
-    extern number amplitude;
-    extern number frequency;
-    
-    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-        vec2 tc = texture_coords;
-        tc.x += sin(tc.y * frequency + time) * amplitude;
-        return Texel(texture, tc) * color;
-    }
-]]
-
 -- Card hover effect shader
 Shaders.cardHover = love.graphics.newShader[[
     extern number time;
