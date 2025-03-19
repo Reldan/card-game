@@ -45,8 +45,8 @@ Game.menuItems = {
 
 function Game:load()
     -- Initialize sounds
-    SoundManager.init()
-    SoundManager.playMusic()
+    -- SoundManager.init()
+    -- SoundManager.playMusic()
     
     -- Initialize background canvas
     self.backgroundCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())

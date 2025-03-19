@@ -1,5 +1,6 @@
 local Hand = require("hand")
 local SoundManager = require("sound_manager")
+require("hand_renderer")
 local Player = {}
 Player.__index = Player
 
@@ -27,7 +28,7 @@ function Player:drawInfo(x, y, w, h) -- Отрисовка информации
 end
 
 function Player:drawHand(x, y, cardW, cardH, selectedIndex) -- Отрисовка руки
-    self.hand:draw(x, y, cardW, cardH, selectedIndex)
+    RenderHand(self.hand, x, y, cardW, cardH, selectedIndex)
 end
 
 function Player:endTurn()
