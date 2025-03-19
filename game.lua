@@ -1,7 +1,6 @@
 local Card = require("card")
 local Player = require("player")
 local LevelManager = require("level_manager")
-local Particles = require("particles")
 local Utils = require("utils")
 local Shaders = require("shaders")
 local SoundManager = require("sound_manager")
@@ -30,7 +29,6 @@ local Game = {
     enemyTurnAnimation = {active = false, timer = 0},
     selectedCardToDelete = nil,
     editingCardIndex = nil,
-    particles = {},
     transition = {active = false, alpha = 0},
     shaderTime = 0,
     backgroundCanvas = nil
@@ -200,7 +198,6 @@ function Game:update(dt)
     for _, enemy in ipairs(self.enemies) do
         enemy:update(dt)
     end
-    Particles.update(self.particles, dt)
     if self.transition.active then
         self.transition.alpha = self.transition.alpha - dt
         if self.transition.alpha <= 0 then
@@ -272,7 +269,6 @@ function Game:draw()
         love.graphics.rectangle("fill", w * 0.01, h * 0.01, w * self.CONST.BUTTON_WIDTH, h * self.CONST.BUTTON_HEIGHT, 10, 10)
         love.graphics.setColor(0, 0, 0)
         love.graphics.printf("Back", w * 0.01, h * 0.015, w * self.CONST.BUTTON_WIDTH, "center")
-        Particles.draw(self.particles)
     elseif self.state == "edit" then
         love.graphics.setColor(1, 1, 1, 0.8)
         love.graphics.printf("Deck Editor", 0, h * 0.05, w, "center", 0, 1.5, 1.5)
@@ -382,7 +378,6 @@ function Game:mousepressed(x, y, button)
                 local enemyX = enemyStartX + (i - 1) * (enemyWidth + w * 0.02)
                 if Utils.isMouseOver(enemyX, h * 0.05, enemyWidth, h * self.CONST.INFO_HEIGHT) and self.selectedCardIndex then
                     if self.player:playCard(self.selectedCardIndex, enemy) then
-                        table.insert(self.particles, Particles.new(enemyX + enemyWidth / 2, h * 0.05 + h * self.CONST.INFO_HEIGHT / 2, 10))
                         self.selectedCardIndex = nil
                         self.selectedEnemyIndex = nil
                         self:checkGameState()
