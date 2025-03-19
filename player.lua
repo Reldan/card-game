@@ -12,7 +12,6 @@ function Player.new()
     self.deck = {}
     self.discardPile = {}
     self.hand = Hand.new()
-    self.debug = true  -- Enable debug logging
     return self
 end
 
@@ -32,11 +31,9 @@ function Player:drawHand(x, y, cardW, cardH, selectedIndex) -- Отрисовк�
 end
 
 function Player:endTurn()
-    if self.debug then
-        print("\n[End Turn] Starting end turn sequence")
-        print(string.format("[End Turn] Initial state - Hand: %d, Deck: %d, Discard: %d",
-            #self.hand.cards, #self.deck, #self.discardPile))
-    end
+    print("\n[End Turn] Starting end turn sequence")
+    print(string.format("[End Turn] Initial state - Hand: %d, Deck: %d, Discard: %d",
+        #self.hand.cards, #self.deck, #self.discardPile))
     
     -- Reset energy
     self.energy = self.maxEnergy
@@ -51,24 +48,20 @@ function Player:endTurn()
         end
     end
     
-    if self.debug then
-        print(string.format("[End Turn] After discarding - Hand: %d, Deck: %d, Discard: %d",
-            #self.hand.cards, #self.deck, #self.discardPile))
-    end
+    print(string.format("[End Turn] After discarding - Hand: %d, Deck: %d, Discard: %d",
+        #self.hand.cards, #self.deck, #self.discardPile))
     
     -- Draw new hand
     self:drawCards()
     
-    if self.debug then
-        print(string.format("[End Turn] Final state - Hand: %d, Deck: %d, Discard: %d\n",
-            #self.hand.cards, #self.deck, #self.discardPile))
-        
-        -- Verify total card count
-        local totalCards = #self.hand.cards + #self.deck + #self.discardPile
-        print(string.format("[Card Count] Total cards in game: %d", totalCards))
-        if totalCards < 9 then
-            print("[WARNING] Cards have been lost! Expected 9 cards total.")
-        end
+    print(string.format("[End Turn] Final state - Hand: %d, Deck: %d, Discard: %d\n",
+        #self.hand.cards, #self.deck, #self.discardPile))
+    
+    -- Verify total card count
+    local totalCards = #self.hand.cards + #self.deck + #self.discardPile
+    print(string.format("[Card Count] Total cards in game: %d", totalCards))
+    if totalCards < 9 then
+        print("[WARNING] Cards have been lost! Expected 9 cards total.")
     end
 end
 
@@ -76,16 +69,14 @@ function Player:drawCards()
     local Game = require("game")
     local cardsNeeded = Game.CONST.HAND_SIZE - #self.hand.cards
     
-    if self.debug then
-        print(string.format("[Draw Cards] Need: %d, Deck: %d, Discard: %d", 
-            cardsNeeded, #self.deck, #self.discardPile))
-        local totalBefore = #self.hand.cards + #self.deck + #self.discardPile
-        print(string.format("[Draw Cards] Total cards before: %d", totalBefore))
-    end
+    print(string.format("[Draw Cards] Need: %d, Deck: %d, Discard: %d", 
+        cardsNeeded, #self.deck, #self.discardPile))
+    local totalBefore = #self.hand.cards + #self.deck + #self.discardPile
+    print(string.format("[Draw Cards] Total cards before: %d", totalBefore))
     
     -- First check if we need to reshuffle
     if #self.deck < cardsNeeded and #self.discardPile > 0 then
-        if self.debug then print("[Draw Cards] Reshuffling deck") end
+        print("[Draw Cards] Reshuffling deck")
         self:reshuffleDeck()
     end
     
@@ -93,9 +84,7 @@ function Player:drawCards()
     local cardsAvailable = #self.deck
     local cardsToDraw = math.min(cardsNeeded, cardsAvailable)
     
-    if self.debug then
-        print(string.format("[Draw Cards] Drawing %d cards from deck", cardsToDraw))
-    end
+    print(string.format("[Draw Cards] Drawing %d cards from deck", cardsToDraw))
     
     -- Draw cards
     local drawnCards = {}
@@ -111,11 +100,9 @@ function Player:drawCards()
         self.hand:addCard(card)
     end
     
-    if self.debug then
-        print(string.format("[Draw Cards] Final hand size: %d", #self.hand.cards))
-        local totalAfter = #self.hand.cards + #self.deck + #self.discardPile
-        print(string.format("[Draw Cards] Total cards after: %d", totalAfter))
-    end
+    print(string.format("[Draw Cards] Final hand size: %d", #self.hand.cards))
+    local totalAfter = #self.hand.cards + #self.deck + #self.discardPile
+    print(string.format("[Draw Cards] Total cards after: %d", totalAfter))
 end
 
 function Player:drawCard()
@@ -128,10 +115,8 @@ function Player:drawCard()
 end
 
 function Player:reshuffleDeck()
-    if self.debug then
-        print(string.format("[Reshuffle] Before - Deck: %d, Discard: %d",
-            #self.deck, #self.discardPile))
-    end
+    print(string.format("[Reshuffle] Before - Deck: %d, Discard: %d",
+        #self.deck, #self.discardPile))
     
     -- Create a temporary table to store all cards
     local allCards = {}
@@ -163,10 +148,8 @@ function Player:reshuffleDeck()
         table.insert(self.deck, card)
     end
     
-    if self.debug then
-        print(string.format("[Reshuffle] After - Deck: %d, Discard: %d",
-            #self.deck, #self.discardPile))
-    end
+    print(string.format("[Reshuffle] After - Deck: %d, Discard: %d",
+        #self.deck, #self.discardPile))
 end
 
 function Player:isAlive() -- Проверка жизни
@@ -174,33 +157,25 @@ function Player:isAlive() -- Проверка жизни
 end
 
 function Player:playCard(index, target)
-    if self.debug then
-        print(string.format("[Play Card] Before - Hand: %d, Deck: %d, Discard: %d",
-            #self.hand.cards, #self.deck, #self.discardPile))
-    end
+    print(string.format("[Play Card] Before - Hand: %d, Deck: %d, Discard: %d",
+        #self.hand.cards, #self.deck, #self.discardPile))
 
     local card = self.hand.cards[index]
     if not card then 
-        if self.debug then
-            print("[Play Card] Error: No card at index")
-        end
+        print("[Play Card] Error: No card at index")
         return false 
     end
     
     -- Check if we can play the card
     if self.energy < card.cost then
-        if self.debug then
-            print("[Play Card] Error: Not enough energy")
-        end
+        print("[Play Card] Error: Not enough energy")
         return false
     end
 
     -- Move card to discard pile first
     local playedCard = self.hand:removeCard(index)
     if not playedCard then
-        if self.debug then
-            print("[Play Card] Error: Failed to remove card from hand")
-        end
+        print("[Play Card] Error: Failed to remove card from hand")
         return false
     end
     
@@ -221,14 +196,12 @@ function Player:playCard(index, target)
     table.insert(self.discardPile, playedCard)
     SoundManager.playSound("card_play")
     
-    if self.debug then
-        print(string.format("[Play Card] After - Hand: %d, Deck: %d, Discard: %d",
-            #self.hand.cards, #self.deck, #self.discardPile))
-        
-        -- Verify total cards
-        local totalCards = #self.hand.cards + #self.deck + #self.discardPile
-        print(string.format("[Play Card] Total cards: %d", totalCards))
-    end
+    print(string.format("[Play Card] After - Hand: %d, Deck: %d, Discard: %d",
+        #self.hand.cards, #self.deck, #self.discardPile))
+    
+    -- Verify total cards
+    local totalCards = #self.hand.cards + #self.deck + #self.discardPile
+    print(string.format("[Play Card] Total cards: %d", totalCards))
     
     return true
 end
