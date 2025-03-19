@@ -1,5 +1,4 @@
 local SpriteGenerator = require("sprite_generator")
-local SoundManager = require("sound_manager")
 
 local Enemy = {}
 Enemy.__index = Enemy
@@ -89,11 +88,9 @@ function Enemy:playTurn(target)
     if math.random() < 0.5 then
         target.health = target.health - self.attack
         self.hitAnimation = 0.5
-        SoundManager.playSound("enemy_hit")
         return true
     else
         self.defending = true
-        SoundManager.playSound("enemy_defend")
         return false
     end
 end
@@ -106,9 +103,6 @@ function Enemy:update(dt)
     -- Update hit animation
     if self.hitAnimation > 0 then
         self.hitAnimation = self.hitAnimation - dt * 2
-        if self.health <= 0 and self.hitAnimation <= 0 then
-            SoundManager.playSound("enemy_death")
-        end
     end
     
     -- Update bounce animation

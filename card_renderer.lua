@@ -1,5 +1,3 @@
-local Shaders = require("shaders")
-
 function RenderCard(card, x, y, w, h, isSelected)
     -- Create canvas for the card
     local cardCanvas = love.graphics.newCanvas(w + 10, h + 10)
@@ -11,17 +9,10 @@ function RenderCard(card, x, y, w, h, isSelected)
     love.graphics.rectangle("fill", 5, 5, w, h, 10, 10)
     love.graphics.setColor(isSelected and {1, 1, 0.5, 0.9} or {0.9, 0.9, 0.9, 0.8})
     love.graphics.rectangle("fill", 0, 0, w, h, 10, 10)
-    love.graphics.setColor(0.2, 0.2, 0.2)
+    love.graphics.setColor(0.8, 0.8, 0.8) -- Background color
     love.graphics.rectangle("line", 0, 0, w, h, 10, 10)
     
-    -- Reset canvas and apply shaders
     love.graphics.setCanvas()
-    
-    if isSelected then
-        love.graphics.setShader(Shaders.cardGlow)
-    else
-        love.graphics.setShader(Shaders.cardHover)
-    end
     
     -- Draw the card with shader effects
     love.graphics.draw(cardCanvas, x, y)

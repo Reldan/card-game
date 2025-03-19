@@ -1,5 +1,4 @@
 local Hand = require("hand")
-local SoundManager = require("sound_manager")
 require("hand_renderer")
 local Player = {}
 Player.__index = Player
@@ -33,7 +32,6 @@ function Player:endTurn()
     
     -- Reset energy
     self.energy = self.maxEnergy
-    SoundManager.playSound("button_click")
     
     -- Move current hand to discard pile
     local handSize = #self.hand.cards
@@ -104,7 +102,6 @@ end
 function Player:drawCard()
     -- Only draw if we have cards in the deck
     if #self.deck > 0 then
-        SoundManager.playSound("card_draw")
         return table.remove(self.deck, 1)
     end
     return nil
@@ -182,15 +179,11 @@ function Player:playCard(index, target)
     local damage = card.attack
     if target.defending then
         damage = math.floor(damage * 0.5)
-        SoundManager.playSound("defend")
-    else
-        SoundManager.playSound("hit")
     end
     target.health = target.health - damage
     
     -- Add to discard pile
     table.insert(self.discardPile, playedCard)
-    SoundManager.playSound("card_play")
     
     print(string.format("[Play Card] After - Hand: %d, Deck: %d, Discard: %d",
         #self.hand.cards, #self.deck, #self.discardPile))

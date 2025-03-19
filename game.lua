@@ -2,8 +2,6 @@ local Card = require("card")
 local Player = require("player")
 local LevelManager = require("level_manager")
 local Utils = require("utils")
-local Shaders = require("shaders")
-local SoundManager = require("sound_manager")
 
 local Game = {
     CONST = {
@@ -40,17 +38,8 @@ Game.menuItems = {
 }
 
 function Game:load()
-    -- Initialize sounds
-    -- SoundManager.init()
-    -- SoundManager.playMusic()
-    
     -- Initialize background canvas
     self.backgroundCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
-    
-    -- Set shader parameters
-    Shaders.cardGlow:send("glowStrength", 0.5)
-    Shaders.cardGlow:send("glowColor", {0.5, 0.7, 1.0})
-    Shaders.cardHover:send("hoverStrength", 1.0)
     
     self.cards = {
         {name = "Warrior", attack = 3, cost = 2, description = "Basic fighter"},
@@ -126,15 +115,8 @@ function Game:update(dt)
         for i, item in ipairs(self.menuItems) do
             local x = (w - bw) / 2
             local y = startY + (i - 1) * (bh + h * 0.05)
-            if Utils.isMouseOver(x, y, bw, bh) and item.hover == 0 then
-                SoundManager.playSound("button_hover")
-            end
         end
     end
-    
-    -- Update shader time
-    self.shaderTime = self.shaderTime + dt
-    Shaders.cardHover:send("time", self.shaderTime)
     
     if self.enemyTurnAnimation.active then
         self.enemyTurnAnimation.timer = self.enemyTurnAnimation.timer - dt
@@ -234,7 +216,6 @@ end
 
 function Game:mousepressed(x, y, button)
     if button ~= 1 then return end
-    SoundManager.playSound("button_click")
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
     if self.state == "menu" then
