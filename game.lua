@@ -217,7 +217,8 @@ function Game:update(dt)
 end
 
 function Game:draw()
-    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+    local w = love.graphics.getWidth()
+    local h = love.graphics.getHeight()
     
     -- Draw background with wave effect
     love.graphics.setCanvas(self.backgroundCanvas)
@@ -234,7 +235,12 @@ function Game:draw()
 
     if self.state == "menu" then
         love.graphics.setColor(1, 1, 1, 0.8)
-        love.graphics.printf("Card Deck Adventure", 0, h * 0.1, w, "center", 0, 2, 2)
+        local font = love.graphics.newFont(48) 
+        love.graphics.setFont(font)
+        love.graphics.printf("Card Deck Adventure", 0, h * 0.1, w, "center")
+        love.graphics.setColor(1, 0.2, 0.2, 0.8)
+        local font = love.graphics.newFont(20) 
+        love.graphics.setFont(font)
         local bw, bh = w * self.CONST.BUTTON_WIDTH * 3, h * self.CONST.BUTTON_HEIGHT
         local startY = h * 0.3
         for i, item in ipairs(self.menuItems) do
